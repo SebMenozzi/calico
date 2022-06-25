@@ -2,28 +2,40 @@ set(APP_NAME "app")
 
 add_executable(${APP_NAME})
 
+set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS} -import-objc-header ${CMAKE_CURRENT_SOURCE_DIR}/Shaders/Shader-Header.h" )
+
 set(SHADERS
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLDirectionalLight.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLFairy.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLGBuffer.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLPointLights.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLShadow.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLSkybox.metal
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLConfig.h
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLShaderCommon.h
-	${PROJECT_SOURCE_DIR}/Shaders/AAPLShaderTypes.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLDirectionalLight.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLFairy.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLGBuffer.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLPointLights.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLShadow.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLSkybox.metal
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLConfig.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLShaderCommon.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Shaders/AAPLShaderTypes.h
 )
 
 set(ASSETS
-	${PROJECT_SOURCE_DIR}/Assets/Catalog.xcassets
-	${PROJECT_SOURCE_DIR}/Assets/Meshes/Temple.mtl
-	${PROJECT_SOURCE_DIR}/Assets/Meshes/Temple.obj
+	${CMAKE_CURRENT_SOURCE_DIR}/Assets/Catalog.xcassets
+	${CMAKE_CURRENT_SOURCE_DIR}/Assets/Meshes/Temple.mtl
+	${CMAKE_CURRENT_SOURCE_DIR}/Assets/Meshes/Temple.obj
+)
+
+set(SHARED_SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Extensions/PlatformView+Layout.swift
+
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Platform/Operator.swift
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Platform/PlatformEdgeInsets.swift
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Platform/PlatformView.swift
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Platform/PlatformViewController.swift
+
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/AppDelegate.swift
+	${CMAKE_CURRENT_SOURCE_DIR}/Shared/RootViewController.swift
 )
 
 target_sources(${APP_NAME} PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/Shared/AppDelegate.swift
-	${CMAKE_CURRENT_SOURCE_DIR}/Shared/ViewController.swift
-	${CMAKE_CURRENT_SOURCE_DIR}/Shared/Float+Extensions.swift
+	${SHARED_SOURCES}
 )
 
 # CODE_SIGN_STYLE: Set to Manual or Automatic signing
@@ -67,8 +79,93 @@ else ()
 		${ASSETS}
 	)
 
-	target_sources(${APP_NAME} PRIVATE
+	set(MACOS_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/macOS/main.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/Window.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/Label.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/Font.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/Color.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/ImageView.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/macOS/Button.swift
+	)
+
+	set(MATH_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/Math/Math+Matrix.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Math/Math+Scalar.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Math/Math+TypeAlias.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Math/Math+Vector.swift
+	)
+
+	set(EDITOR_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/WindowController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Main/MainViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Main/RenderViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Main/SidebarViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/CreateProject/CreateProjectViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/CreateProject/CreateProjectView.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/CreateProject/CreateProjectItemView.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Console/ConsoleViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Console/Console.swift
+	)
+	
+	set(ECS_SOURCES
+		${CMAKE_CURRENT_LIST_DIR}/ECS/ECS.swift
+		${CMAKE_CURRENT_LIST_DIR}/ECS/ECS+Component.swift
+		${CMAKE_CURRENT_LIST_DIR}/ECS/ECS+ComponentMask.swift
+		${CMAKE_CURRENT_LIST_DIR}/ECS/ECS+Entity.swift
+		${CMAKE_CURRENT_LIST_DIR}/ECS/ECS+Identifiers.swift
+	)
+
+	set(COMPONENTS_SOURCES
+		${CMAKE_CURRENT_LIST_DIR}/Component/Camera+Component.swift
+		${CMAKE_CURRENT_LIST_DIR}/Component/Component.swift
+		${CMAKE_CURRENT_LIST_DIR}/Component/Tag+Component.swift
+		${CMAKE_CURRENT_LIST_DIR}/Component/Transform+Component.swift
+	)
+
+	set(SCENE_SOURCES
+		${CMAKE_CURRENT_LIST_DIR}/Scene/Object.swift
+		${CMAKE_CURRENT_LIST_DIR}/Scene/Scene.swift
+	)
+
+	set(RENDERER_SOURCES
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Extensions/Metal+Extensions.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Extensions/ModelIO+Extensions.swift
+
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Mesh/Material.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Mesh/Mesh.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Mesh/SubMesh.swift
+
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Utilities/BufferView.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Utilities/Camera.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Utilities/RenderDestination.swift
+
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/DepthStencilStates.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/GBufferTextures.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/PipelineStates.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/Renderer.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/SinglePassDeferredRenderer.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/TraditionalDeferredRenderer.swift
+		${CMAKE_CURRENT_LIST_DIR}/Renderer/VertexDescriptors.swift
+	)
+
+	# Group the files by folder in the IDE
+	source_group("MacOS" FILES ${MACOS_SOURCES})
+	source_group("Math" FILES ${MATH_SOURCES})
+	source_group("Editor" FILES ${EDITOR_SOURCES})
+	source_group("ECS" FILES ${ECS_SOURCES})
+	source_group("Components" FILES ${COMPONENTS_SOURCES})
+	source_group("Scene" FILES ${SCENE_SOURCES})
+	source_group("Renderer" FILES ${RENDERER_SOURCES})
+
+	target_sources(${APP_NAME} PRIVATE
+		${MACOS_SOURCES}
+		${MATH_SOURCES}
+		${EDITOR_SOURCES}
+		${ECS_SOURCES}
+		${COMPONENTS_SOURCES}
+		${SCENE_SOURCES}
+		${RENDERER_SOURCES}
 		${RESOURCES}
 	)
 
@@ -97,5 +194,6 @@ target_link_libraries(${APP_NAME} PUBLIC
 )
 
 # Group the files by folder in the IDE
+source_group("Shared" FILES ${SHARED_SOURCES})
 source_group("Shaders" FILES ${SHADERS})
 source_group("Assets" FILES ${ASSETS})
