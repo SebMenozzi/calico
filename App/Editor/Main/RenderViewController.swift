@@ -33,7 +33,7 @@ public final class RenderViewController: NSViewController {
             fatalError("Unable to create default Metal Device")
         }
         
-        renderView = MTKView(frame: view.frame, device: device)
+        renderView = MTKView(frame: .zero, device: device)
         view.addSubview(renderView)
         renderView.fillSuperview()
 
@@ -44,9 +44,11 @@ public final class RenderViewController: NSViewController {
         scene = Scene(device: device)
 
         if useSinglePassDeferred {
-            renderer = SinglePassDeferredRenderer(device: device,
-                                                scene: scene,
-                                                renderDestination: renderView) { [weak self] in
+            renderer = SinglePassDeferredRenderer(
+                device: device,
+                scene: scene,
+                renderDestination: renderView
+            ) { [weak self] in
                 
                 guard let self = self else { return }
                                         
@@ -55,9 +57,11 @@ public final class RenderViewController: NSViewController {
                 }
             }
         } else {
-            renderer = TraditionalDeferredRenderer(device: device,
-                                                   scene: scene,
-                                            renderDestination: renderView) { [weak self] in
+            renderer = TraditionalDeferredRenderer(
+                device: device,
+                scene: scene,
+                renderDestination: renderView
+            ) { [weak self] in
                 guard let self = self else { return }
                                         
                 if !self.renderView.isPaused {

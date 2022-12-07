@@ -1,7 +1,7 @@
 #if os(iOS) || os(tvOS)
 import UIKit
-public typealias PlatformViewController = UIViewController
+typealias PlatformViewController = UIViewController
 #else
 import AppKit
-public typealias PlatformViewController = NSViewController
+typealias PlatformViewController = NSViewController
 #endif

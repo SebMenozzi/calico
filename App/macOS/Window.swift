@@ -1,8 +1,8 @@
 import AppKit
 
-public final class Window: NSWindow {
+final class Window: NSWindow {
 
-    public init(contentViewController: NSViewController) {
+    init(contentViewController: NSViewController) {
         super.init(
             contentRect: .zero,
             styleMask: [

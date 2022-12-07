@@ -1,15 +1,15 @@
 import AppKit
 
-public final class WindowController: NSWindowController {
+final class WindowController: NSWindowController {
 
-    public init() {
+    init() {
         super.init(window: nil)
         
         presentMainWindow()
         // presentCreateProjectWindow()
     }
     
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

@@ -1,6 +1,6 @@
 import AppKit
 
-public final class ConsoleViewController: PlatformViewController {
+final class ConsoleViewController: PlatformViewController {
 
 
 }

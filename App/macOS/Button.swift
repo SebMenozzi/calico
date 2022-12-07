@@ -1,15 +1,7 @@
 import AppKit
 
 open class Button: NSButton {
-    
-    public override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-    }   
-    
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     open override func updateTrackingAreas() {
         super.updateTrackingAreas()
         

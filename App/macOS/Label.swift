@@ -1,6 +1,6 @@
 import AppKit
 
-public class Label: NSTextField {
+class Label: NSTextField {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)

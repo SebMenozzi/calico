@@ -34,6 +34,7 @@ ios-sim:
 	xcrun simctl launch booted co.seb.calico-ios
 
 xcode:
+	mkdir -p build
 	cd build; cmake .. -G Xcode
 	cd build; cmake --open .
 

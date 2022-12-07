@@ -1,16 +1,16 @@
 import AppKit
 
-public final class MainViewController: PlatformViewController {
+final class MainViewController: PlatformViewController {
     
     private enum Constants {
         static let sidebarWidth: CGFloat = 250
     }
     
-    public override func loadView() {
+    override func loadView() {
         self.view = NSView(frame: NSRect(x: 0, y: 0, width: 1280, height: 720))
     }
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         let splitViewController = NSSplitViewController()
@@ -22,7 +22,7 @@ public final class MainViewController: PlatformViewController {
         sidebarItem.maximumThickness = Constants.sidebarWidth
         splitViewController.addSplitViewItem(sidebarItem)
         
-        let renderItem = NSSplitViewItem(sidebarWithViewController: RenderViewController())
+        let renderItem = NSSplitViewItem(sidebarWithViewController: EditorViewController())
         renderItem.canCollapse = false
         splitViewController.addSplitViewItem(renderItem)
     }

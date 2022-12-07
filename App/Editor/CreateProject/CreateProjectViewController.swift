@@ -1,6 +1,6 @@
 import AppKit
 
-public final class CreateProjectViewController: PlatformViewController {
+final class CreateProjectViewController: PlatformViewController {
     
     private enum Constants {
         static let welcomeContainerWidth: CGFloat = 350
@@ -93,11 +93,11 @@ public final class CreateProjectViewController: PlatformViewController {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    public override func loadView() {
+    override func loadView() {
         self.view = NSView(frame: NSRect(x: 0, y: 0, width: 846, height: 395))
     }
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         supportButton.action = #selector(onTap)

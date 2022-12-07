@@ -9,7 +9,7 @@ import MetalKit
 let maxFramesInFlight = 3
 
 // MARK: - Scene
-public class Scene {
+class Scene {
     
     let ecs = ECS()
     

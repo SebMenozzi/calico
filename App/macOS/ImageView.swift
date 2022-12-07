@@ -16,12 +16,4 @@ open class ImageView: NSImageView {
             return super.image
         }
     }
-
-    public override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-    }   
-    
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

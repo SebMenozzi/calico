@@ -1,32 +1,32 @@
 #if os(iOS) || os(tvOS)
 import UIKit
-public typealias PlatformView = UIView
+typealias PlatformView = UIView
 #else
 import AppKit
-public typealias PlatformView = NSView
+typealias PlatformView = NSView
 #endif
 
-public class View: PlatformView {
+class View: PlatformView {
 
-    public init() {
+   init() {
         super.init(frame: .zero)
     }
 
     @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     #if os(macOS)
-    public var isUserInteractionsEnabled = true
+    var isUserInteractionsEnabled = true
     
-    public override func mouseDown(with event: NSEvent) {
+    override func mouseDown(with event: NSEvent) {
         if isUserInteractionsEnabled {
             super.mouseDown(with: event)
         }
     }
 
-    public override func mouseUp(with event: NSEvent) {
+    override func mouseUp(with event: NSEvent) {
         if isUserInteractionsEnabled {
             super.mouseUp(with: event)
         }

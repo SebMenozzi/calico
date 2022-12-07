@@ -1,7 +1,7 @@
 #if os(iOS) || os(tvOS)
 import UIKit
-public typealias PlatformEdgeInsets = UIEdgeInsets
+typealias PlatformEdgeInsets = UIEdgeInsets
 #else
 import AppKit
-public typealias PlatformEdgeInsets = NSEdgeInsets
+typealias PlatformEdgeInsets = NSEdgeInsets
 #endif

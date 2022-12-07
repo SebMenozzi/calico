@@ -8,7 +8,7 @@ import ModelIO
 import MetalKit
 
 // MARK: - Renderer
-public class Renderer: NSObject {
+class Renderer: NSObject {
     
     lazy var shadowRenderPassDescriptor: MTLRenderPassDescriptor = {
         let descriptor = MTLRenderPassDescriptor()
@@ -339,11 +339,11 @@ public class Renderer: NSObject {
 extension Renderer: MTKViewDelegate {
     
     /// MTKViewDelegate Callback: Respond to device orientation change or other view size change
-    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
     }
     
-    public func draw(in view: MTKView) {
+    func draw(in view: MTKView) {
         
     }
 }

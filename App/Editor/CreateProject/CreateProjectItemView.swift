@@ -16,7 +16,7 @@ public struct CreateProjectItem {
     }
 }
 
-public final class CreateProjectItemView: View {
+final class CreateProjectItemView: View {
 
     private enum Constants {
         static let cornerRadius: CGFloat = 8
@@ -53,7 +53,7 @@ public final class CreateProjectItemView: View {
         }
     }
 
-    public var isSelected = false {
+    var isSelected = false {
         didSet {
             updateStyle()
         }
@@ -80,7 +80,7 @@ public final class CreateProjectItemView: View {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    public override init() {
+    override init() {
         super.init()
         
         translatesAutoresizingMaskIntoConstraints = false
@@ -108,23 +108,23 @@ public final class CreateProjectItemView: View {
         ])
     }
     
-    public override var wantsUpdateLayer: Bool {
+    override var wantsUpdateLayer: Bool {
         return true
     }
     
-    public override func updateLayer() {
+    override func updateLayer() {
         super.updateLayer()
 
         updateStyle()
     }
     
-    public override func mouseDown(with event: NSEvent) {
+    override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
 
         action?()
     }
     
-    public override func mouseEntered(with event: NSEvent) {
+    override func mouseEntered(with event: NSEvent) {
         titleLabel.textColor = Color.label
         descriptionLabel.textColor = Color.label
         
@@ -133,7 +133,7 @@ public final class CreateProjectItemView: View {
         layer?.backgroundColor = NSColor.systemBlue.cgColor
     }
 
-    public override func mouseExited(with event: NSEvent) {
+    override func mouseExited(with event: NSEvent) {
         titleLabel.textColor = Color.label
         descriptionLabel.textColor = isSelected ? Color.label : Color.secondaryLabel
         
@@ -142,7 +142,7 @@ public final class CreateProjectItemView: View {
         layer?.backgroundColor = isSelected ? Constants.selectedColor.cgColor : .clear
     }
     
-    public override func updateTrackingAreas() {
+    override func updateTrackingAreas() {
         super.updateTrackingAreas()
 
         for trackingArea in self.trackingAreas {

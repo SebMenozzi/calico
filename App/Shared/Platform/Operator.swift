@@ -12,7 +12,7 @@ self.backgroundView = UILabel()..{
 }
 */
 @discardableResult
-public func .. <T>(object: T, block: (inout T) -> Void) -> T {
+func .. <T>(object: T, block: (inout T) -> Void) -> T {
     var object = object
     block(&object)
     return object

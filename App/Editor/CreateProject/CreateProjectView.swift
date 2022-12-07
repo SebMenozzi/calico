@@ -1,6 +1,6 @@
 import AppKit
 
-public final class CreateProjectView: View {
+final class CreateProjectView: View {
     
     private enum KeyCode: UInt16 {
         case down = 125
