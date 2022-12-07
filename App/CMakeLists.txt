@@ -106,6 +106,9 @@ else ()
 		${CMAKE_CURRENT_SOURCE_DIR}/Editor/CreateProject/CreateProjectItemView.swift
 		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Console/ConsoleViewController.swift
 		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Console/Console.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Test/EditorViewController.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Test/RulerView.swift
+		${CMAKE_CURRENT_SOURCE_DIR}/Editor/Test/TextView.swift
 	)
 	
 	set(ECS_SOURCES
