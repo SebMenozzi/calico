@@ -1,0 +1,26 @@
+strings:
+  inputs:
+    - Resources/en.lproj
+  outputs:
+    - templateName: structured-swift5
+      output: Supporting Files/swiftgen/Strings.swift
+
+xcassets:
+  inputs: Resources/Assets.xcassets
+  outputs:
+    templateName: swift5
+    output: Supporting Files/swiftgen/Assets.swift
+
+fonts:
+  inputs: Resources/Fonts/
+  outputs:
+    templateName: swift5
+    output: Supporting Files/swiftgen/Fonts.swift
+
+files:
+    inputs:
+      - Resources/Sounds
+    filter: .+\.aac$
+    outputs:
+      templateName: structured-swift5
+      output: Supporting Files/swiftgen/Files.swift

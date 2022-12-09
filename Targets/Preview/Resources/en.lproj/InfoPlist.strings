@@ -1,0 +1,5 @@
+NSCameraUsageDescription = "DISCO would like to access your Camera so that you can record your best moments.";
+NSMicrophoneUsageDescription = "DISCO would like to access your Microphone so that you can record with sound.";
+NSContactsUsageDescription = "DISCO would like to access to your Contacts so that you can invite more friends.";
+NSLocationWhenInUseUsageDescription = "DISCO would like to access to your Location so that you can share your location in your moment.";
+NSPhotoLibraryUsageDescription = "DISCO would like to to access to your Camera Roll.";
