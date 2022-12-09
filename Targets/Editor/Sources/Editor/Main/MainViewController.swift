@@ -4,6 +4,8 @@ import PeerTalk_macOS
 
 final class MainViewController: PlatformViewController {
 
+    private let usbMuxManager: USBMuxManager = USBMuxManager.shared()
+
     // We use a serial queue that we toggle depending on if we are connected or
     // not. When we are not connected to a peer, the queue is running to handle
     // "connect" tries. When we are connected to a peer, the queue is suspended
@@ -11,7 +13,6 @@ final class MainViewController: PlatformViewController {
     private lazy var notConnectedQueue: DispatchQueue = DispatchQueue(label: "PTExample.notConnectedQueue")
     private var notConnectedQueueSuspended: Bool = false
 
-    private let usbMuxManager: USBMuxManager = USBMuxManager.shared()
     private weak var connectedChannel: PTChannel? {
         didSet {
             // Toggle the notConnectedQueue_ depending on if we are connected or not
@@ -139,18 +140,17 @@ extension MainViewController: PTChannelDelegate {
         } else if type == Frame.textMessage.rawValue {
             guard let payload = payload else { return }
 
-            // We need to convert this code in Objective-C to Swift
-            //
             // PTExampleTextFrame *textFrame = (PTExampleTextFrame*)payload.bytes;
             // textFrame->length = ntohl(textFrame->length);
             // NSString *message = [[NSString alloc] initWithBytes:textFrame->utf8text length:textFrame->length encoding:NSUTF8StringEncoding];
 
             payload.withUnsafeBytes { (ptr: UnsafePointer<PTExampleTextFrame>) in
                 let mutablePtr = UnsafeMutablePointer(mutating: ptr)
+                // CFSwapInt32 is equivalent to ntohl because we converted the length to network byte order
                 mutablePtr.pointee.length = CFSwapInt32(mutablePtr.pointee.length)
 
                 let bytesLength = Int(mutablePtr.pointee.length)
-                // I don't understand why this works
+                // By adding a stride of 1 PTExampleTextFrame to this pointer, we get the pointer of the string
                 let bytesPtr = mutablePtr.advanced(by: 1)
 
                 let message = String(bytesNoCopy: bytesPtr, length: bytesLength, encoding: .utf8, freeWhenDone: false)

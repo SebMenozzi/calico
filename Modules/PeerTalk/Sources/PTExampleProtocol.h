@@ -21,9 +21,11 @@ typedef struct _PTExampleTextFrame {
 static dispatch_data_t PTExampleTextDispatchDataWithString(NSString *message) {
     // Use a custom struct
     const char *utf8text = [message cStringUsingEncoding:NSUTF8StringEncoding];
+
     size_t length = strlen(utf8text);
     PTExampleTextFrame *textFrame = CFAllocatorAllocate(nil, sizeof(PTExampleTextFrame) + length, 0);
     memcpy(textFrame->utf8text, utf8text, length); // Copy bytes to utf8text array
+
     textFrame->length = htonl(length); // Convert integer to network byte order
   
     // Wrap the textFrame in a dispatch data object
