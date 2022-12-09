@@ -116,13 +116,11 @@ static NSString *bundleIdentifier = nil;
     return self;
 }
 
-
 - (void)dealloc {
     if (channel_) {
         channel_ = nil;
     }
 }
-
 
 - (BOOL)valid {
     return !!channel_;

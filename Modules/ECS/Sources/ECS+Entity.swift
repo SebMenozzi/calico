@@ -1,5 +1,4 @@
 public struct ECSEntity {
-
     public let entityID: ECSEntityID
     public var componentMask = ECSComponentMask()
     

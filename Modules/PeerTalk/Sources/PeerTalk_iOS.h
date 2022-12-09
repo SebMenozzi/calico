@@ -1,6 +1,8 @@
-#import <PeerTalk_iOS/PTChannel.h>
-#import <PeerTalk_iOS/PTProtocol.h>
-#import <PeerTalk_iOS/USBMux.h>
-#import <PeerTalk_iOS/USBMuxManager.h>
-#import <PeerTalk_iOS/PTExampleProtocol.h>
-#import <PeerTalk_iOS/PTAddress.h>
+#import "PTChannel.h"
+#import "PTProtocol.h"
+#import "PTAddress.h"
+
+#import "USBMux.h"
+#import "USBMuxManager.h"
+
+#import "PTExampleProtocol.h"

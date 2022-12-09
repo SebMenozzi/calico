@@ -30,7 +30,16 @@ func previewAppTarget() -> Target {
         resources: "Preview/Resources/**",
         entitlements: "Preview/App.entitlements",
         additionalSettings: settings,
-        dependencies: TargetDependency.SPMDependency.allCases.map(TargetDependency.init)
+        dependencies: [
+            .project(
+                target: "Platform_iOS",
+                path: .relativeToRoot("Modules/Platform")
+            ),
+            .project(
+                target: "PeerTalk_iOS",
+                path: .relativeToRoot("Modules/PeerTalk")
+            )
+        ] + TargetDependency.SPMDependency.allCases.map(TargetDependency.init)
     )
 }
 

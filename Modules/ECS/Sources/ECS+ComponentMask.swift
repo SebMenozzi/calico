@@ -1,5 +1,4 @@
 public struct ECSComponentMask {
-    
     private var mask: UInt32 = 0
     
     public init() {}

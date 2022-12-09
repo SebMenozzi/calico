@@ -8,7 +8,7 @@ let iOSFrameworkTarget = Target.iOSFramework(
     sources: .paths(["Sources/**"]),
     headers: .allHeaders(
         from: "Sources/**",
-        umbrella: "Sources/PeerTalk_macOS.h",
+        umbrella: "Sources/PeerTalk_iOS.h",
         private: "Sources/**"
     ),
     dependencies: []
@@ -19,7 +19,7 @@ let macOSFrameworkTarget = Target.macOSFramework(
     sources: .paths(["Sources/**"]),
     headers: .allHeaders(
         from: "Sources/**",
-        umbrella: "Sources/PeerTalk_iOS.h",
+        umbrella: "Sources/PeerTalk_macOS.h",
         private: "Sources/**"
     ),
     dependencies: []
@@ -28,5 +28,5 @@ let macOSFrameworkTarget = Target.macOSFramework(
 let project = Project.createProject(
     name: frameworkName,
     packages: [],
-    targets: [macOSFrameworkTarget]
+    targets: [iOSFrameworkTarget, macOSFrameworkTarget]
 )

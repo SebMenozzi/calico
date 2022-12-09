@@ -3,9 +3,9 @@ import Platform_macOS
 
 final class Window: NSWindow {
 
-    init(contentViewController: PlatformViewController) {
+    init(contentRect: NSRect, contentViewController: PlatformViewController) {
         super.init(
-            contentRect: NSRect(x: 0, y: 0, width: 1280, height: 720),
+            contentRect: contentRect,
             styleMask: [
                 .titled,
                 .closable,

@@ -209,6 +209,7 @@ extension ECS {
             assertionFailure("Cannot create component. Currently only supports \(Self.maxComponentCount) components!")
             return false
         }
+
         return true
     }
 }

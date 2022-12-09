@@ -39,6 +39,7 @@
 
         if (inet_ntop(sockaddr_.ss_family, sin_addr, buffer, (unsigned int)bufferSize - 1) == NULL) {
             CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
+            
             return nil;
         }
 
@@ -51,17 +52,17 @@
 - (NSInteger)port {
     if (sockaddr_.ss_len) {
         return ntohs(PT_SOCKADDR_ACCESS(&sockaddr_, sin_port, sin6_port));
-    } else {
-        return 0;
     }
+
+    return 0;
 }
 
 - (NSString*)description {
     if (sockaddr_.ss_len) {
         return [NSString stringWithFormat:@"%@:%u", self.name, (unsigned) self.port];
-    } else {
-        return @"(?)";
     }
+
+    return @"(?)";
 }
 
 @end

@@ -2,7 +2,11 @@ import AppKit
 import Platform_macOS
 import PeerTalk_macOS
 
-final class MainViewController: PlatformViewController {
+final class ViewController: PlatformViewController {
+
+    private enum Constants {
+        static let sidebarWidth: CGFloat = 250
+    }
 
     private let usbMuxManager: USBMuxManager = USBMuxManager.shared()
 
@@ -35,17 +39,6 @@ final class MainViewController: PlatformViewController {
 
     private var pings: [UInt32: Date] = [:]
 
-    private enum Frame: UInt32 {
-        case deviceInfo = 100
-        case textMessage = 101
-        case ping = 102
-        case pong = 103
-    }
-
-    private enum Constants {
-        static let sidebarWidth: CGFloat = 250
-    }
-    
     override func loadView() {
         self.view = PlatformView()
     }
@@ -80,7 +73,7 @@ final class MainViewController: PlatformViewController {
 
 // MARK: - Ping
 
-extension MainViewController {
+extension ViewController {
 
     @objc private func ping() {
         if let connectedChannel = connectedChannel {
@@ -88,7 +81,7 @@ extension MainViewController {
             let now = Date()
             pings[tag] = now
 
-            connectedChannel.sendFrame(type: Frame.ping.rawValue, tag: tag, payload: nil) { [weak self] error in
+            connectedChannel.sendFrame(type: PTExampleFrameTypePing.rawValue, tag: tag, payload: nil) { [weak self] error in
                 guard let self = self else { return }
 
                 self.perform(#selector(self.ping), with: nil, afterDelay: PTPingDelay)
@@ -113,14 +106,10 @@ extension MainViewController {
 
 // MARK: - PTChannelDelegate
 
-extension MainViewController: PTChannelDelegate {
+extension ViewController: PTChannelDelegate {
 
     func channel(_ channel: PTChannel, shouldAcceptFrame type: UInt32, tag: UInt32, payloadSize: UInt32) -> Bool {
-        if type != Frame.deviceInfo.rawValue &&
-            type != Frame.textMessage.rawValue &&
-            type != Frame.ping.rawValue &&
-            type != Frame.pong.rawValue &&
-            type != PTFrameTypeEndOfStream {
+        if PTExampleFrameType(rawValue: type) == PTExampleFrameTypeUnknown {
             print("Unexpected frame of type \(type)")
             channel.close()
 
@@ -131,35 +120,23 @@ extension MainViewController: PTChannelDelegate {
     }
 
     func channel(_ channel: PTChannel, didReceiveFrame type: UInt32, tag: UInt32, payload: Data?) {
-        if type == Frame.deviceInfo.rawValue {
+        switch PTExampleFrameType(rawValue: type) {
+        case PTExampleFrameTypeDeviceInfo:
             guard let payload = payload else { return }
 
             if let deviceInfo = try? PropertyListSerialization.propertyList(from: payload, options: PropertyListSerialization.ReadOptions.mutableContainers, format: nil) {
                 print("Connected to: \(deviceInfo)")
             }
-        } else if type == Frame.textMessage.rawValue {
+        case PTExampleFrameTypeTextMessage:
             guard let payload = payload else { return }
 
-            // PTExampleTextFrame *textFrame = (PTExampleTextFrame*)payload.bytes;
-            // textFrame->length = ntohl(textFrame->length);
-            // NSString *message = [[NSString alloc] initWithBytes:textFrame->utf8text length:textFrame->length encoding:NSUTF8StringEncoding];
-
-            payload.withUnsafeBytes { (ptr: UnsafePointer<PTExampleTextFrame>) in
-                let mutablePtr = UnsafeMutablePointer(mutating: ptr)
-                // CFSwapInt32 is equivalent to ntohl because we converted the length to network byte order
-                mutablePtr.pointee.length = CFSwapInt32(mutablePtr.pointee.length)
-
-                let bytesLength = Int(mutablePtr.pointee.length)
-                // By adding a stride of 1 PTExampleTextFrame to this pointer, we get the pointer of the string
-                let bytesPtr = mutablePtr.advanced(by: 1)
-
-                let message = String(bytesNoCopy: bytesPtr, length: bytesLength, encoding: .utf8, freeWhenDone: false)
-
-                print("MESSAGE: \(message ?? "???")")
+            if let message = PTExampleTextRetrieveMessageFromPayload(payload) {
+                print("[\(channel.userInfo)]: \(message)")
             }
-
-        } else if type == Frame.pong.rawValue {
+        case PTExampleFrameTypePong:
             pongWithTag(tag: tag)
+        default:
+            assert(false)
         }
     }
 
@@ -178,7 +155,7 @@ extension MainViewController: PTChannelDelegate {
 
 // MARK: - Wired device connections
 
-extension MainViewController {
+extension ViewController {
 
     private func startListeningForDevices() {
         NotificationCenter.default.addObserver(forName: .PTUSBDeviceDidAttach, object: usbMuxManager, queue: nil) { [weak self] notification in

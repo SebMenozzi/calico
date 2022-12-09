@@ -14,8 +14,8 @@ open class Button: NSButton {
             owner: self,
             userInfo: nil
         )
+
         addTrackingArea(area)
-        
         
         super.updateTrackingAreas()
     }

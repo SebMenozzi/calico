@@ -200,8 +200,10 @@ static const uint8_t kUserInfoKey;
     if (fd == -1) {
         perror("socket(AF_INET, SOCK_STREAM, 0) failed");
         error = errno;
+
         if (callback)
             callback([[NSError alloc] initWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil], nil);
+
         return;
     }
   

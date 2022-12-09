@@ -3,12 +3,6 @@
 
 @class USBMuxChannel;
 
-// Error codes returned with NSError.code for NSError domain USBMuxErrorDomain
-typedef enum {
-    USBMuxManagerErrorBadDevice = 2,
-    USBMuxManagerErrorConnectionRefused = 3,
-} USBMuxError;
-
 @interface USBMuxManager : NSObject {
     USBMuxChannel *channel_;
 }

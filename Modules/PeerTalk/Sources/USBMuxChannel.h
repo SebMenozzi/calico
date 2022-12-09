@@ -3,8 +3,7 @@
 
 #import "USBMux.h"
 
-typedef uint32_t USBMuxPacketType;
-enum {
+typedef enum : uint32_t {
     USBMuxPacketTypeResult = 1,
     USBMuxPacketTypeConnect = 2,
     USBMuxPacketTypeListen = 3,
@@ -13,13 +12,12 @@ enum {
     // Unknown = 6,
     // Unknown = 7,
     USBMuxPacketTypePlistPayload = 8,
-};
+} USBMuxPacketType;
 
-typedef uint32_t USBMuxPacketProtocol;
-enum {
+typedef enum : uint32_t {
     USBMuxPacketProtocolBinary = 0,
     USBMuxPacketProtocolPlist = 1,
-};
+} USBMuxPacketProtocol;
 
 typedef struct usbmux_packet {
     uint32_t size;
