@@ -7,7 +7,7 @@
 static USBMuxManager *manager;
 static dispatch_once_t onceToken;
 
-+ (USBMuxManager*)shared {
++ (instancetype) shared {
     dispatch_once(&onceToken, ^{
         manager = [USBMuxManager new];
 

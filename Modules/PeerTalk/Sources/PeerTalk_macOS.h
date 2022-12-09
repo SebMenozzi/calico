@@ -3,4 +3,4 @@
 #import <PeerTalk_macOS/USBMux.h>
 #import <PeerTalk_macOS/USBMuxManager.h>
 #import <PeerTalk_macOS/PTExampleProtocol.h>
-#import <PeerTalk_macOS/PeerAddress.h>
+#import <PeerTalk_macOS/PTAddress.h>

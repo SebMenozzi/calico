@@ -3,4 +3,4 @@
 #import <PeerTalk_iOS/USBMux.h>
 #import <PeerTalk_iOS/USBMuxManager.h>
 #import <PeerTalk_iOS/PTExampleProtocol.h>
-#import <PeerTalk_iOS/PeerAddress.h>
+#import <PeerTalk_iOS/PTAddress.h>

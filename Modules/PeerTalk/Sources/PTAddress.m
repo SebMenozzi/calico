@@ -1,4 +1,4 @@
-#import "PeerAddress.h"
+#import "PTAddress.h"
 
 #include <arpa/inet.h>
 
@@ -10,7 +10,7 @@
     ((const struct sockaddr_in6 *)(ss))->member6 \
   ))
 
-@implementation PeerAddress
+@implementation PTAddress
 
 - (id)initWithSockaddr:(const struct sockaddr_storage*)addr {
     if (!(self = [super init]))

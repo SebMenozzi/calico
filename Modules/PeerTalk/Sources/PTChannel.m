@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 
 #import "PTPrivate.h"
-#import "PeerAddress.h"
+#import "PTAddress.h"
 
 // Connection state (storage: uint8_t)
 #define kConnStateNone 0
@@ -170,17 +170,19 @@ static const uint8_t kUserInfoKey;
             self->connState_ = kConnStateNone;
         }
 
-        if (callback)
+        if (callback) {
             callback(error);
+        }
     } onEnd:^(NSError *error) {
         if (self->delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didEndWithError) {
             [self->delegate_ ioFrameChannel:self didEndWithError:error];
         }
+
         self->endError_ = nil;
     }];
 }
 
-- (void)connectToPort:(in_port_t)port IPv4Address:(in_addr_t)address callback:(void(^)(NSError *error, PeerAddress *address))callback {
+- (void)connectToPort:(in_port_t)port IPv4Address:(in_addr_t)address callback:(void(^)(NSError *error, PTAddress *address))callback {
     assert(protocol_ != NULL);
 
     if (connState_ != kConnStateNone) {
@@ -249,7 +251,7 @@ static const uint8_t kUserInfoKey;
   
     // Success
     NSError *err = nil;
-    PeerAddress *ptAddr = [[PeerAddress alloc] initWithSockaddr:(struct sockaddr_storage*)&addr];
+    PTAddress *ptAddr = [[PTAddress alloc] initWithSockaddr:(struct sockaddr_storage*)&addr];
     [self startReadingFromConnectedChannel:dispatchChannel error:&err];
 
     if (callback)
@@ -312,6 +314,7 @@ static const uint8_t kUserInfoKey;
   
     dispatch_source_set_event_handler(dispatchObj_source_, ^{
         unsigned long nconns = dispatch_source_get_data(self->dispatchObj_source_);
+
         while ([self acceptIncomingConnection:fd] && --nconns);
     });
   
@@ -319,6 +322,7 @@ static const uint8_t kUserInfoKey;
         // Captures *self*, effectively holding a reference to *self* until cancelled.
 		self->dispatchObj_source_ = nil;
         close(fd);
+
         if (self->delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didEndWithError) {
             [self->delegate_ ioFrameChannel:self didEndWithError:self->endError_];
 			self->endError_ = nil;
@@ -328,71 +332,72 @@ static const uint8_t kUserInfoKey;
     dispatch_resume(dispatchObj_source_);
   
     connState_ = kConnStateListening;
+
     if (callback)
         callback(nil);
 }
 
-
 - (BOOL)acceptIncomingConnection:(dispatch_fd_t)serverSocketFD {
-  struct sockaddr_in addr;
-  socklen_t addrLen = sizeof(addr);
-  dispatch_fd_t clientSocketFD = accept(serverSocketFD, (struct sockaddr*)&addr, &addrLen);
-  
-  if (clientSocketFD == -1) {
-    perror("accept()");
-    return NO;
-  }
-  
-  // prevent SIGPIPE
-	int on = 1;
-	setsockopt(clientSocketFD, SOL_SOCKET, SO_NOSIGPIPE, &on, sizeof(on));
-  
-  if (fcntl(clientSocketFD, F_SETFL, O_NONBLOCK) == -1) {
-    perror("fcntl(.. O_NONBLOCK)");
-    close(clientSocketFD);
-    return NO;
-  }
-  
-  if (delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didAcceptConnection_fromAddress) {
-    PTChannel *peerChannel = [[PTChannel alloc] initWithProtocol:protocol_ delegate:delegate_];
-    __block PTChannel *localChannelRef = self;
-    dispatch_io_t dispatchChannel = dispatch_io_create(DISPATCH_IO_STREAM, clientSocketFD, protocol_.queue, ^(int error) {
-      // Important note: This block captures *self*, thus a reference is held to
-      // *self* until the fd is truly closed.
-      localChannelRef = nil;
+    struct sockaddr_in addr;
+    socklen_t addrLen = sizeof(addr);
+    dispatch_fd_t clientSocketFD = accept(serverSocketFD, (struct sockaddr*)&addr, &addrLen);
 
-      close(clientSocketFD);
-      
-      if (peerChannel->delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didEndWithError) {
-        NSError *err = error == 0 ? peerChannel->endError_ : [[NSError alloc] initWithDomain:NSPOSIXErrorDomain code:error userInfo:nil];
-        [peerChannel->delegate_ ioFrameChannel:peerChannel didEndWithError:err];
-        peerChannel->endError_ = nil;
-      }
-    });
-    
-    [peerChannel setConnState:kConnStateConnected];
-    [peerChannel setDispatchChannel:dispatchChannel];
-    
-    assert(((struct sockaddr_storage*)&addr)->ss_len == addrLen);
-    PeerAddress *address = [[PeerAddress alloc] initWithSockaddr:(struct sockaddr_storage*)&addr];
-    [delegate_ ioFrameChannel:self didAcceptConnection:peerChannel fromAddress:address];
-    
-    NSError *err = nil;
-    if (![peerChannel startReadingFromConnectedChannel:dispatchChannel error:&err]) {
-      NSLog(@"startReadingFromConnectedChannel failed in accept: %@", err);
+    if (clientSocketFD == -1) {
+        perror("accept()");
+        return NO;
     }
-  } else {
-    close(clientSocketFD);
-  }
-  return YES;
-}
+  
+    // prevent SIGPIPE
+    int on = 1;
+    setsockopt(clientSocketFD, SOL_SOCKET, SO_NOSIGPIPE, &on, sizeof(on));
+  
+    if (fcntl(clientSocketFD, F_SETFL, O_NONBLOCK) == -1) {
+        perror("fcntl(.. O_NONBLOCK)");
+        close(clientSocketFD);
+        return NO;
+    }
+  
+    if (delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didAcceptConnection_fromAddress) {
+        PTChannel *peerChannel = [[PTChannel alloc] initWithProtocol:protocol_ delegate:delegate_];
+        __block PTChannel *localChannelRef = self;
+        dispatch_io_t dispatchChannel = dispatch_io_create(DISPATCH_IO_STREAM, clientSocketFD, protocol_.queue, ^(int error) {
+            // Important note: This block captures *self*, thus a reference is held to
+            // *self* until the fd is truly closed.
+            localChannelRef = nil;
 
+            close(clientSocketFD);
+      
+            if (peerChannel->delegateFlags_ & kDelegateFlagImplements_ioFrameChannel_didEndWithError) {
+                NSError *err = error == 0 ? peerChannel->endError_ : [[NSError alloc] initWithDomain:NSPOSIXErrorDomain code:error userInfo:nil];
+                [peerChannel->delegate_ ioFrameChannel:peerChannel didEndWithError:err];
+                peerChannel->endError_ = nil;
+            }
+        });
+    
+        [peerChannel setConnState:kConnStateConnected];
+        [peerChannel setDispatchChannel:dispatchChannel];
+    
+        assert(((struct sockaddr_storage*)&addr)->ss_len == addrLen);
+        PTAddress *address = [[PTAddress alloc] initWithSockaddr:(struct sockaddr_storage*)&addr];
+        [delegate_ ioFrameChannel:self didAcceptConnection:peerChannel fromAddress:address];
+    
+        NSError *err = nil;
+        if (![peerChannel startReadingFromConnectedChannel:dispatchChannel error:&err]) {
+            NSLog(@"startReadingFromConnectedChannel failed in accept: %@", err);
+        }
+    } else {
+        close(clientSocketFD);
+    }
+
+    return YES;
+}
 
 #pragma mark - Closing the channel
 
 - (void)close {
     if ((connState_ == kConnStateConnecting || connState_ == kConnStateConnected) && dispatchObj_channel_) {
         dispatch_io_close(dispatchObj_channel_, DISPATCH_IO_STOP);
+
         [self setDispatchChannel:NULL];
     } else if (connState_ == kConnStateListening && dispatchObj_source_) {
         dispatch_source_cancel(dispatchObj_source_);
@@ -403,7 +408,8 @@ static const uint8_t kUserInfoKey;
 - (void)cancel {
     if ((connState_ == kConnStateConnecting || connState_ == kConnStateConnected) && dispatchObj_channel_) {
         dispatch_io_close(dispatchObj_channel_, 0);
-    [self setDispatchChannel:NULL];
+
+        [self setDispatchChannel:NULL];
     } else if (connState_ == kConnStateListening && dispatchObj_source_) {
         dispatch_source_cancel(dispatchObj_source_);
     }
@@ -491,6 +497,7 @@ static const uint8_t kUserInfoKey;
 - (void)sendFrameOfType:(uint32_t)frameType tag:(uint32_t)tag withPayload:(NSData *)payload callback:(void(^)(NSError *error))callback {
     if (connState_ == kConnStateConnecting || connState_ == kConnStateConnected) {
         dispatch_data_t payloadCopy = dispatch_data_create(payload.bytes, payload.length, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+
         [protocol_ sendFrameOfType:frameType tag:tag withPayload:payloadCopy overChannel:dispatchObj_channel_ callback:callback];
     } else if (callback) {
         callback([NSError errorWithDomain:NSPOSIXErrorDomain code:EPERM userInfo:nil]);

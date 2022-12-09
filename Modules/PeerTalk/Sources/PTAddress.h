@@ -4,7 +4,7 @@
 #import <sys/socket.h>
 
 // Represents a peer's address
-@interface PeerAddress : NSObject {
+@interface PTAddress : NSObject {
     struct sockaddr_storage sockaddr_;
 }
 

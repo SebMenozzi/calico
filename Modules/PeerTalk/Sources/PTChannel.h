@@ -17,7 +17,7 @@
     #define PT_FINAL __attribute__((objc_subclassing_restricted))
 #endif
 
-@class PeerAddress;
+@class PTAddress;
 @protocol PTChannelDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -64,7 +64,7 @@ PT_FINAL @interface PTChannel : NSObject
 // A value returned from inet_aton() will be in network byte order. You can use a value of inet_aton()
 // as the address parameter here, but you must flip the byte order before passing the
 // in_addr_t to this function.
-- (void)connectToPort:(in_port_t)port IPv4Address:(in_addr_t)address callback:(void(^)(NSError * _Nullable error, PeerAddress *_Nullable address))callback NS_SWIFT_NAME(connect(to:IPv4Address:callback:));
+- (void)connectToPort:(in_port_t)port IPv4Address:(in_addr_t)address callback:(void(^)(NSError * _Nullable error, PTAddress *_Nullable address))callback NS_SWIFT_NAME(connect(to:IPv4Address:callback:));
 
 // Listen for connections on port and address, effectively starting a socket
 // server. Provided port must NOT be in network byte order. Provided in_addr_t
@@ -103,7 +103,7 @@ PT_FINAL @interface PTChannel : NSObject
 - (void)ioFrameChannel:(PTChannel *)channel
  didReceiveFrameOfType:(uint32_t)type
                    tag:(uint32_t)tag
-               payload:(nullable NSData *)payload NS_SWIFT_NAME(channel(_:didRecieveFrame:tag:payload:));
+               payload:(nullable NSData *)payload NS_SWIFT_NAME(channel(_:didReceiveFrame:tag:payload:));
 
 /// Invoked to accept an incoming frame on a channel. Reply NO ignore the
 /// incoming frame. If not implemented by the delegate, all frames are accepted.
@@ -122,7 +122,7 @@ shouldAcceptFrameOfType:(uint32_t)type
 // accepted.
 - (void)ioFrameChannel:(PTChannel *)channel
    didAcceptConnection:(PTChannel *)otherChannel
-           fromAddress:(PeerAddress *)address NS_SWIFT_NAME(channel(_:didAcceptConnection:from:));
+           fromAddress:(PTAddress *)address NS_SWIFT_NAME(channel(_:didAcceptConnection:from:));
 
 @end
 
